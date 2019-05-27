@@ -8,7 +8,6 @@ import re
 E = lxml.builder.ElementMaker()
 
 namespaces = {'x': 'http://www.opengis.net/kml/2.2'}
-filename = sys.argv[1]
 
 mapsMeStyles = {
     'placemark-red':    'http://maps.me/placemarks/placemark-red.png',
@@ -86,5 +85,8 @@ def process(filename):
                             xml_declaration=True)
         sys.stdout.buffer.write(string)
 
-
-process(filename)
+if __name__== "__main__":
+    if len(sys.argv) != 2:
+        print('usage: gmm <kml>')
+        sys.exit(1)
+    process(sys.argv[1])
