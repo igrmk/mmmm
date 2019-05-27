@@ -2,6 +2,9 @@
 
 import lxml.etree as T
 import sys
+import lxml.builder
+
+E = lxml.builder.ElementMaker()
 
 namespaces = {'x': 'http://www.opengis.net/kml/2.2'}
 filename = sys.argv[1]
@@ -119,11 +122,7 @@ def process(filename):
             elem.text = mapsMeStyle(elem.text)
         pos = 0
         for name, ref in mapsMeStyles.items():
-            style = T.Element('Style', id=name)
-            iconStyle = T.SubElement(style, 'IconStyle')
-            icon = T.SubElement(iconStyle, 'Icon')
-            href = T.SubElement(icon, 'href')
-            href.text = ref
+            style = E.Style(E.IconStyle(E.Icon(E.href(ref))), id=name)
             doc.insert(pos, style)
             pos += 1
         indent(root.getroot())
