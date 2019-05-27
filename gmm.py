@@ -84,30 +84,33 @@ styleMap = {
     '#icon-1602-FF5252-nodesc': '#placemark-pink',
 }
 
+
 def indent(elem, level=0):
-  i = '\n' + level * '  '
-  if len(elem):
-    if not elem.text or not elem.text.strip():
-      elem.text = i + '  '
-    if not elem.tail or not elem.tail.strip():
-      elem.tail = i
-    for elem in elem:
-      indent(elem, level+1)
-    if not elem.tail or not elem.tail.strip():
-      elem.tail = i
-  else:
-    if level and (not elem.tail or not elem.tail.strip()):
-      elem.tail = i
+    i = '\n' + level * '  '
+    if len(elem):
+        if not elem.text or not elem.text.strip():
+            elem.text = i + '  '
+        if not elem.tail or not elem.tail.strip():
+            elem.tail = i
+        for elem in elem:
+            indent(elem, level+1)
+        if not elem.tail or not elem.tail.strip():
+            elem.tail = i
+    else:
+        if level and (not elem.tail or not elem.tail.strip()):
+            elem.tail = i
+
 
 def mapsMeStyle(style):
     if style in styleMap:
         return styleMap[style]
     return style
 
+
 def process(filename):
     with open(filename, 'r') as f:
-        root=T.parse(f)
-        doc=root.find('x:Document', namespaces=namespaces)
+        root = T.parse(f)
+        doc = root.find('x:Document', namespaces=namespaces)
         if doc is None:
             return
         for elem in doc.xpath('//x:Style | //x:StyleMap', namespaces=namespaces):
@@ -120,10 +123,15 @@ def process(filename):
             iconStyle = T.SubElement(style, 'IconStyle')
             icon = T.SubElement(iconStyle, 'Icon')
             href = T.SubElement(icon, 'href')
-            href.text=ref
+            href.text = ref
             doc.insert(pos, style)
             pos += 1
         indent(root.getroot())
-        sys.stdout.buffer.write(T.tostring(root, pretty_print=True, encoding='UTF-8', xml_declaration=True))
+        string = T.tostring(root,
+                            pretty_print=True,
+                            encoding='UTF-8',
+                            xml_declaration=True)
+        sys.stdout.buffer.write(string)
+
 
 process(filename)
