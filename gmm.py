@@ -60,6 +60,11 @@ def maps_me_style(style):
 def process(doc):
     for i in doc.xpath('//x:Style | //x:StyleMap', namespaces=ns):
         i.getparent().remove(i)
+    for i in doc.xpath('//x:Folder//x:Placemark//x:LineString', namespaces=ns):
+        i = i.getparent()
+        i.getparent().remove(i)
+    for i in doc.xpath('//x:Folder[not(x:Placemark)]', namespaces=ns):
+        i.getparent().remove(i)
     for i in doc.xpath('//x:Folder//x:Placemark//x:styleUrl', namespaces=ns):
         i.text = maps_me_style(i.text)
     for i, name in enumerate(unique_styles()):
