@@ -3,6 +3,7 @@
 import lxml.etree as T
 import sys
 import lxml.builder
+import re
 
 E = lxml.builder.ElementMaker()
 
@@ -21,70 +22,21 @@ mapsMeStyles = {
 }
 
 styleMap = {
-    '#icon-1502-F9A825': '#placemark-orange',
-    '#icon-1511-817717': '#placemark-brown',
-    '#icon-1517-F57C00': '#placemark-orange',
-    '#icon-1517-FBC02D': '#placemark-yellow',
-    '#icon-1532-FF5252': '#placemark-pink',
-    '#icon-1534-F9A825': '#placemark-orange',
-    '#icon-1534-FBC02D': '#placemark-yellow',
-    '#icon-1577-F57C00': '#placemark-orange',
-    '#icon-1577-F9A825': '#placemark-orange',
-    '#icon-1577-FBC02D': '#placemark-yellow',
-    '#icon-1577-FFD600': '#placemark-yellow',
-    '#icon-1603-880E4F': '#placemark-purple',
-    '#icon-1603-9C27B0': '#placemark-purple',
-    '#icon-1603-C2185B': '#placemark-red',
-    '#icon-1603-FF5252': '#placemark-pink',
-    '#icon-1717-FF5252': '#placemark-pink',
-    '#icon-1741-FF5252': '#placemark-pink',
-    '#icon-1801-817717': '#placemark-brown',
-    '#icon-1879-F57C00': '#placemark-orange',
-    '#icon-1879-F9A825': '#placemark-orange',
-    '#icon-1879-FBC02D': '#placemark-yelow',
-    '#icon-1899-0288D1': '#placemark-blue',
-    '#icon-1899-097138': '#placemark-green',
-    '#icon-1899-558B2F': '#placemark-green',
-    '#icon-1899-817717': '#placemark-brown',
-    '#icon-1899-880E4F': '#placemark-red',
-    '#icon-1899-7CB342': '#placemark-green',
-    '#icon-1532-FF5252': '#placemark-pink',
-    '#icon-1899-673AB7': '#placemark-blue',
-    '#icon-1801-097138': '#placemark-green',
-    '#icon-1504-E65100': '#placemark-red',
-    '#icon-1602-FF5252': '#placemark-pink',
-    '#icon-1502-F9A825-nodesc': '#placemark-orange',
-    '#icon-1511-817717-nodesc': '#placemark-brown',
-    '#icon-1517-F57C00-nodesc': '#placemark-orange',
-    '#icon-1517-FBC02D-nodesc': '#placemark-yellow',
-    '#icon-1532-FF5252-nodesc': '#placemark-pink',
-    '#icon-1534-F9A825-nodesc': '#placemark-orange',
-    '#icon-1534-FBC02D-nodesc': '#placemark-yellow',
-    '#icon-1577-F57C00-nodesc': '#placemark-orange',
-    '#icon-1577-F9A825-nodesc': '#placemark-orange',
-    '#icon-1577-FBC02D-nodesc': '#placemark-yellow',
-    '#icon-1577-FFD600-nodesc': '#placemark-yellow',
-    '#icon-1603-880E4F-nodesc': '#placemark-purple',
-    '#icon-1603-9C27B0-nodesc': '#placemark-purple',
-    '#icon-1603-C2185B-nodesc': '#placemark-red',
-    '#icon-1603-FF5252-nodesc': '#placemark-pink',
-    '#icon-1717-FF5252-nodesc': '#placemark-pink',
-    '#icon-1741-FF5252-nodesc': '#placemark-pink',
-    '#icon-1801-817717-nodesc': '#placemark-brown',
-    '#icon-1879-F57C00-nodesc': '#placemark-orange',
-    '#icon-1879-F9A825-nodesc': '#placemark-orange',
-    '#icon-1879-FBC02D-nodesc': '#placemark-yelow',
-    '#icon-1899-0288D1-nodesc': '#placemark-blue',
-    '#icon-1899-097138-nodesc': '#placemark-green',
-    '#icon-1899-558B2F-nodesc': '#placemark-green',
-    '#icon-1899-817717-nodesc': '#placemark-brown',
-    '#icon-1899-880E4F-nodesc': '#placemark-red',
-    '#icon-1899-7CB342-nodesc': '#placemark-green',
-    '#icon-1532-FF5252-nodesc': '#placemark-pink',
-    '#icon-1899-673AB7-nodesc': '#placemark-blue',
-    '#icon-1801-097138-nodesc': '#placemark-green',
-    '#icon-1504-E65100-nodesc': '#placemark-red',
-    '#icon-1602-FF5252-nodesc': '#placemark-pink',
+    '0288D1': '#placemark-blue',
+    '097138': '#placemark-green',
+    '558B2F': '#placemark-green',
+    '673AB7': '#placemark-blue',
+    '7CB342': '#placemark-green',
+    '817717': '#placemark-brown',
+    '880E4F': '#placemark-purple',
+    '9C27B0': '#placemark-purple',
+    'C2185B': '#placemark-red',
+    'E65100': '#placemark-orange',
+    'F57C00': '#placemark-orange',
+    'F9A825': '#placemark-orange',
+    'FBC02D': '#placemark-yellow',
+    'FF5252': '#placemark-pink',
+    'FFD600': '#placemark-yellow',
 }
 
 
@@ -104,9 +56,11 @@ def indent(elem, level=0):
             elem.tail = i
 
 
+rex = re.compile('^#icon-\d{4}-([0-9A-F]{6})')
 def mapsMeStyle(style):
-    if style in styleMap:
-        return styleMap[style]
+    m = rex.match(style)
+    if m and m.group(1) in styleMap:
+        return styleMap[m.group(1)]
     return style
 
 
