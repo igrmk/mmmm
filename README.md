@@ -8,7 +8,7 @@ They are not the same as in the original KML from Google but they are as close a
 Installation
 ------------
 
-You need lxml installation. On Debian/Ubuntu:
+You need Python 3 and lxml installation. On Debian/Ubuntu:
 
     sudo apt-get install python3-lxml
 
