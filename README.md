@@ -8,4 +8,4 @@ They are not the same as in the original KML from Google but they are as close a
 Usage
 -----
 
-    ./gmm google-maps.kml > maps-me.kml
+    ./gmm.py google-maps.kml > maps-me.kml
