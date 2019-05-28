@@ -9,7 +9,8 @@ import collections as C
 E = lxml.builder.ElementMaker()
 
 ns = {'x': 'http://www.opengis.net/kml/2.2'}
-mwm = {'mwm': 'https://maps.me'}
+mwm = 'https://maps.me'
+mwmns = {'mwm': mwm}
 google_style_regex = re.compile(r'^#icon-(\d{4})-([0-9A-F]{6})')
 
 style_map = {
@@ -78,10 +79,6 @@ icon_map = {
 }
 
 
-def unique_styles():
-    return C.OrderedDict(zip(style_map.values(), [None] * len(style_map)))
-
-
 def indent(elem, level=0):
     i = '\n' + level * '  '
     if len(elem):
@@ -111,19 +108,18 @@ def maps_me_icon_style(google_style):
 def process(doc):
     for i in doc.xpath('//x:Style | //x:StyleMap', namespaces=ns):
         i.getparent().remove(i)
-    for i in doc.xpath('//x:Folder//x:Placemark//x:LineString', namespaces=ns):
-        i = i.getparent()
+    for i in doc.xpath('//x:Folder//x:Placemark[x:LineString]', namespaces=ns):
         i.getparent().remove(i)
     for i in doc.xpath('//x:Folder[not(x:Placemark)]', namespaces=ns):
         i.getparent().remove(i)
     for i in doc.xpath('//x:Folder//x:Placemark//x:styleUrl', namespaces=ns):
-        icon, style = maps_me_icon_style(i.text)
-        i.text = style
+        icon, i.text = maps_me_icon_style(i.text)
         if icon is not None:
-            extended = T.SubElement(i.getparent(), 'ExtendedData', nsmap=mwm)
-            icon_tag = T.SubElement(extended, '{https://maps.me}icon')
+            extended = T.SubElement(i.getparent(), 'ExtendedData', nsmap=mwmns)
+            icon_tag = T.SubElement(extended, f'{{{mwm}}}icon')
             icon_tag.text = icon
-    for i, name in enumerate(unique_styles()):
+    unique_styles = C.OrderedDict((v, None) for v in style_map.values())
+    for i, name in enumerate(unique_styles):
         ref = f'http://maps.me/placemarks/{name}.png'
         style = E.Style(E.IconStyle(E.Icon(E.href(ref))), id=name)
         doc.insert(i, style)
