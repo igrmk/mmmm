@@ -106,13 +106,13 @@ def maps_me_icon_style(google_style):
 
 
 def process(doc):
-    for i in doc.xpath('//x:Style | //x:StyleMap', namespaces=ns):
+    for i in doc.xpath('x:Style | x:StyleMap', namespaces=ns):
         i.getparent().remove(i)
-    for i in doc.xpath('//x:Folder//x:Placemark[x:LineString]', namespaces=ns):
+    for i in doc.xpath('x:Folder/x:Placemark[x:LineString]', namespaces=ns):
         i.getparent().remove(i)
-    for i in doc.xpath('//x:Folder[not(x:Placemark)]', namespaces=ns):
+    for i in doc.xpath('x:Folder[not(x:Placemark)]', namespaces=ns):
         i.getparent().remove(i)
-    for i in doc.xpath('//x:Folder//x:Placemark//x:styleUrl', namespaces=ns):
+    for i in doc.xpath('x:Folder/x:Placemark/x:styleUrl', namespaces=ns):
         icon, i.text = maps_me_icon_style(i.text)
         if icon is not None:
             extended = T.SubElement(i.getparent(), 'ExtendedData', nsmap=mwmns)
@@ -128,7 +128,7 @@ def process(doc):
 def main(filename):
     with open(filename, 'r') as f:
         root = T.parse(f)
-        doc = root.find('x:Document', ns)
+        doc = root.find('/x:Document', ns)
         if doc is None:
             return
         process(doc)
