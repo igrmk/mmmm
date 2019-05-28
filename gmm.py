@@ -9,7 +9,8 @@ import collections as C
 E = lxml.builder.ElementMaker()
 
 ns = {'x': 'http://www.opengis.net/kml/2.2'}
-google_style_regex = re.compile(r'^#icon-\d{4}-([0-9A-F]{6})')
+mwm = {'mwm': 'https://maps.me'}
+google_style_regex = re.compile(r'^#icon-(\d{4})-([0-9A-F]{6})')
 
 style_map = {
     'C2185B': 'placemark-red',
@@ -44,6 +45,38 @@ style_map = {
     'BDBDBD': 'placemark-orange',
 }
 
+icon_map = {
+    '1602': 'Hotel',
+    '1507': 'Animals',
+    '1743': 'Animals',
+    '1667': 'Buddhism',
+    '1668': 'Buddhism',
+    '1669': 'Buddhism',
+    '1546': 'Building',
+    '1548': 'Building',
+    '1717': 'Building',
+    '1741': 'Building',
+    '1603': 'Building',
+    '1670': 'Christianity',
+    '1540': 'Entertainment',
+    '1555': 'Exchange',
+    '1534': 'Food',
+    '1577': 'Food',
+    '1581': 'Gas',
+    '1675': 'Judaism',
+    '1624': 'Medicine',
+    '1634': 'Mountain',
+    '1636': 'Museum',
+    '1673': 'Islam',
+    '1720': 'Park',
+    '1644': 'Parking',
+    '1684': 'Shop',
+    '1685': 'Shop',
+    '1598': 'Sights',
+    '1701': 'Swim',
+    '1703': 'Water',
+}
+
 
 def unique_styles():
     return C.OrderedDict(zip(style_map.values(), [None] * len(style_map)))
@@ -65,11 +98,14 @@ def indent(elem, level=0):
             elem.tail = i
 
 
-def maps_me_style(style):
-    m = google_style_regex.match(style)
-    if m and m.group(1) in style_map:
-        return '#' + style_map[m.group(1)]
-    return style
+def maps_me_icon_style(google_style):
+    icon, style = None, google_style
+    m = google_style_regex.match(google_style)
+    if m and m.group(1) in icon_map:
+        icon = icon_map[m.group(1)]
+    if m and m.group(2) in style_map:
+        style = '#' + style_map[m.group(2)]
+    return icon, style
 
 
 def process(doc):
@@ -81,7 +117,12 @@ def process(doc):
     for i in doc.xpath('//x:Folder[not(x:Placemark)]', namespaces=ns):
         i.getparent().remove(i)
     for i in doc.xpath('//x:Folder//x:Placemark//x:styleUrl', namespaces=ns):
-        i.text = maps_me_style(i.text)
+        icon, style = maps_me_icon_style(i.text)
+        i.text = style
+        if icon is not None:
+            extended = T.SubElement(i.getparent(), 'ExtendedData', nsmap=mwm)
+            icon_tag = T.SubElement(extended, '{https://maps.me}icon')
+            icon_tag.text = icon
     for i, name in enumerate(unique_styles()):
         ref = f'http://maps.me/placemarks/{name}.png'
         style = E.Style(E.IconStyle(E.Icon(E.href(ref))), id=name)

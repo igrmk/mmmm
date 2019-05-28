@@ -2,7 +2,7 @@ Google My Maps to MAPS.ME KML converter
 =======================================
 
 MAPS.ME just ignores colors and icon images on importing Google My Maps KML.
-This simple tool keeps colors.
+This simple tool tries to keep them.
 They are not the same as in the original KML from Google but they are as close as possible.
 
 Installation
