@@ -130,7 +130,7 @@ def main(filename):
         root = T.parse(f)
         doc = root.find('/x:Document', ns)
         if doc is None:
-            return
+            raise Exception('Document tag not found')
         process(doc)
         indent(root.getroot())
         string = T.tostring(root,
@@ -144,4 +144,7 @@ if __name__ == "__main__":
     if len(sys.argv) != 2:
         print('usage: gmm <kml>')
         sys.exit(1)
-    main(sys.argv[1])
+    try:
+        main(sys.argv[1])
+    except Exception as e:
+        print(e)
