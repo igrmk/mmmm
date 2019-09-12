@@ -86,7 +86,6 @@ icon_map = {
     '1703': 'Water',
 }
 
-
 def indent(elem, level=0):
     i = '\n' + level * '  '
     if len(elem):
@@ -101,7 +100,6 @@ def indent(elem, level=0):
     else:
         if level and (not elem.tail or not elem.tail.strip()):
             elem.tail = i
-
 
 def maps_me_icon_style(google_style):
     icon, style = None, google_style
@@ -119,7 +117,7 @@ def remove_google_styles(doc):
     for i in doc.xpath('x:Style | x:StyleMap', namespaces=ns):
         i.getparent().remove(i)
 
-def remove_unsupported_placemarks(doc):
+def remove_lines(doc):
     for i in doc.xpath('x:Folder/x:Placemark[x:LineString]', namespaces=ns):
         i.getparent().remove(i)
 
@@ -139,21 +137,19 @@ def add_maps_me_styles(doc):
 
 def process(doc, verbose):
     remove_google_styles(doc)
-    remove_unsupported_placemarks(doc)
+    remove_lines(doc)
     remove_empty_folders(doc)
+    add_maps_me_styles(doc)
     for i in doc.xpath('x:Folder/x:Placemark/x:styleUrl', namespaces=ns):
-        icon, style = maps_me_icon_style(i.text)
+        google_style = i.text
+        icon, i.text = maps_me_icon_style(google_style)
         if icon is not None:
             if icon != 'None':
                 extended = T.SubElement(i.getparent(), 'ExtendedData', nsmap=mwmns)
                 icon_tag = T.SubElement(extended, f'{{{mwm}}}icon')
                 icon_tag.text = icon
         elif verbose:
-            err(f'the icon from the following style is not found: {i.text}')
-
-        i.text = style
-
-    add_maps_me_styles(doc)
+            err(f'the icon from the following style is not found: {google_style}')
 
 def leave_unsupported(doc):
     for i in doc.xpath('x:Folder/x:Placemark/x:styleUrl', namespaces=ns):
@@ -189,4 +185,4 @@ if __name__ == "__main__":
     try:
         main(args.file, args.verbose, args.only_unsupported)
     except Exception as e:
-        print(e)
+        err(e)
