@@ -5,6 +5,7 @@ import sys
 import lxml.builder
 import re
 import collections as C
+import argparse
 
 E = lxml.builder.ElementMaker()
 
@@ -53,14 +54,18 @@ icon_map = {
     '1667': 'Buddhism',
     '1668': 'Buddhism',
     '1669': 'Buddhism',
+    '1533': 'Building',
     '1546': 'Building',
     '1548': 'Building',
     '1717': 'Building',
     '1741': 'Building',
     '1603': 'Building',
+    '1716': 'Building',
     '1670': 'Christianity',
+    '1709': 'Entertainment',
     '1540': 'Entertainment',
     '1555': 'Exchange',
+    '1517': 'Food',
     '1534': 'Food',
     '1577': 'Food',
     '1581': 'Gas',
@@ -68,12 +73,15 @@ icon_map = {
     '1624': 'Medicine',
     '1634': 'Mountain',
     '1636': 'Museum',
+    '1592': 'None',
+    '1899': 'None',
     '1673': 'Islam',
     '1720': 'Park',
     '1644': 'Parking',
     '1684': 'Shop',
     '1685': 'Shop',
     '1598': 'Sights',
+    '1521': 'Swim',
     '1701': 'Swim',
     '1703': 'Water',
 }
@@ -104,34 +112,67 @@ def maps_me_icon_style(google_style):
         style = '#' + style_map[m.group(2)]
     return icon, style
 
+def err(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
 
-def process(doc):
+def remove_google_styles(doc):
     for i in doc.xpath('x:Style | x:StyleMap', namespaces=ns):
         i.getparent().remove(i)
+
+def remove_unsupported_placemarks(doc):
     for i in doc.xpath('x:Folder/x:Placemark[x:LineString]', namespaces=ns):
         i.getparent().remove(i)
+
+def remove_empty_folders(doc):
     for i in doc.xpath('x:Folder[not(x:Placemark)]', namespaces=ns):
         i.getparent().remove(i)
-    for i in doc.xpath('x:Folder/x:Placemark/x:styleUrl', namespaces=ns):
-        icon, i.text = maps_me_icon_style(i.text)
-        if icon is not None:
-            extended = T.SubElement(i.getparent(), 'ExtendedData', nsmap=mwmns)
-            icon_tag = T.SubElement(extended, f'{{{mwm}}}icon')
-            icon_tag.text = icon
-    unique_styles = C.OrderedDict((v, None) for v in style_map.values())
+
+def new_ordered_set(xs):
+    return C.OrderedDict((x, None) for x in xs)
+
+def add_maps_me_styles(doc):
+    unique_styles = new_ordered_set(style_map.values())
     for i, name in enumerate(unique_styles):
         ref = f'http://maps.me/placemarks/{name}.png'
         style = E.Style(E.IconStyle(E.Icon(E.href(ref))), id=name)
         doc.insert(i, style)
 
+def process(doc, verbose):
+    remove_google_styles(doc)
+    remove_unsupported_placemarks(doc)
+    remove_empty_folders(doc)
+    for i in doc.xpath('x:Folder/x:Placemark/x:styleUrl', namespaces=ns):
+        icon, style = maps_me_icon_style(i.text)
+        if icon is not None:
+            if icon != 'None':
+                extended = T.SubElement(i.getparent(), 'ExtendedData', nsmap=mwmns)
+                icon_tag = T.SubElement(extended, f'{{{mwm}}}icon')
+                icon_tag.text = icon
+        elif verbose:
+            err(f'the icon from the following style is not found: {i.text}')
 
-def main(filename):
+        i.text = style
+
+    add_maps_me_styles(doc)
+
+def leave_unsupported(doc):
+    for i in doc.xpath('x:Folder/x:Placemark/x:styleUrl', namespaces=ns):
+        icon, style = maps_me_icon_style(i.text)
+        if icon is not None:
+            i.getparent().getparent().remove(i.getparent())
+
+def main(filename, verbose, only_unsupported):
     with open(filename, 'r') as f:
         root = T.parse(f)
         doc = root.find('/x:Document', ns)
         if doc is None:
             raise Exception('Document tag not found')
-        process(doc)
+
+        if not only_unsupported:
+            process(doc, verbose)
+        else:
+            leave_unsupported(doc)
+
         indent(root.getroot())
         string = T.tostring(root,
                             pretty_print=True,
@@ -139,12 +180,13 @@ def main(filename):
                             xml_declaration=True)
         sys.stdout.buffer.write(string)
 
-
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print('usage: gmm <kml>')
-        sys.exit(1)
+    parser = argparse.ArgumentParser(description='Google My Maps to MAPS.ME KML converter')
+    parser.add_argument('file', metavar='GOOGLE_KML', help='Goolge My Maps KML')
+    parser.add_argument('--verbose', action='store_true', help='verbose output')
+    parser.add_argument('--only-unsupported-styles', dest='only_unsupported', action='store_true', help='leave only placemarks with unsupported styles')
+    args = parser.parse_args()
     try:
-        main(sys.argv[1])
+        main(args.file, args.verbose, args.only_unsupported)
     except Exception as e:
         print(e)
