@@ -183,6 +183,7 @@ def main():
     parser.add_argument('file', metavar='GOOGLE_KML', help='Goolge My Maps KML')
     parser.add_argument('--verbose', action='store_true', help='verbose output')
     parser.add_argument('--only-unsupported-styles', dest='only_unsupported', action='store_true', help='leave only placemarks with unsupported styles')
+    parser.add_argument('-v', '--version', action='version', version=f'%(prog)s {__version__}')
     args = parser.parse_args()
     try:
         convert(args.file, args.verbose, args.only_unsupported)
