@@ -1,1 +1,8 @@
 *.kml
+__pycache__
+mmmm.egg-info
+dist
+build
+deploy
+deploy-test
+build-egg

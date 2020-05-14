@@ -7,6 +7,8 @@ import re
 import collections as C
 import argparse
 
+__version__ = '0.0.1'
+
 E = lxml.builder.ElementMaker()
 
 ns = {'x': 'http://www.opengis.net/kml/2.2'}
@@ -157,7 +159,7 @@ def leave_unsupported(doc):
         if icon is not None:
             i.getparent().getparent().remove(i.getparent())
 
-def main(filename, verbose, only_unsupported):
+def convert(filename, verbose, only_unsupported):
     with open(filename, 'r') as f:
         root = T.parse(f)
         doc = root.find('/x:Document', ns)
@@ -176,13 +178,16 @@ def main(filename, verbose, only_unsupported):
                             xml_declaration=True)
         sys.stdout.buffer.write(string)
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(description='Google My Maps to MAPS.ME KML converter')
     parser.add_argument('file', metavar='GOOGLE_KML', help='Goolge My Maps KML')
     parser.add_argument('--verbose', action='store_true', help='verbose output')
     parser.add_argument('--only-unsupported-styles', dest='only_unsupported', action='store_true', help='leave only placemarks with unsupported styles')
     args = parser.parse_args()
     try:
-        main(args.file, args.verbose, args.only_unsupported)
+        convert(args.file, args.verbose, args.only_unsupported)
     except Exception as e:
         err(e)
+
+if __name__ == "__main__":
+    main()

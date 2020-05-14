@@ -10,19 +10,9 @@ Feel free to suggest new icon mappings.
 Usage
 -----
 
-    ./gmm.py google-maps.kml > maps-me.kml
+    mmmm google-maps.kml > maps-me.kml
 
 Installation
 ------------
 
-You need Python 3 and lxml installation. On Debian/Ubuntu:
-
-    sudo apt-get install python3-lxml
-
-For MacOS-X choose correct version for your Python interpreter:
-
-    sudo port install py36-lxml
-
-Then just clone this repository:
-
-    git clone https://github.com/igrmk/gmm.git
+    pip3 install mmmm
