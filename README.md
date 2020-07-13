@@ -16,3 +16,7 @@ Installation
 ------------
 
     pip3 install mmmm
+
+Thanks to
+---------
+[![JetBrains](svg/jetbrains.svg)](https://www.jetbrains.com/?from=mmmm)
