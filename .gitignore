@@ -6,3 +6,4 @@ build
 deploy
 deploy-test
 build-egg
+.idea

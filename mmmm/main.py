@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 
-import lxml.etree as T
+import lxml.etree as tree
 import sys
 import lxml.builder
 import re
-import collections as C
+import collections
 import argparse
 
 __version__ = '0.0.2'
@@ -16,6 +16,7 @@ mwm = 'https://maps.me'
 mwmns = {'mwm': mwm}
 google_style_regex = re.compile(r'^#icon-(\d{4})-([0-9A-F]{6})')
 
+# noinspection SpellCheckingInspection
 style_map = {
     'C2185B': 'placemark-red',
     'A52714': 'placemark-red',
@@ -88,6 +89,7 @@ icon_map = {
     '1703': 'Water',
 }
 
+
 def indent(elem, level=0):
     i = '\n' + level * '  '
     if len(elem):
@@ -103,6 +105,7 @@ def indent(elem, level=0):
         if level and (not elem.tail or not elem.tail.strip()):
             elem.tail = i
 
+
 def maps_me_icon_style(google_style):
     icon, style = None, google_style
     m = google_style_regex.match(google_style)
@@ -112,23 +115,29 @@ def maps_me_icon_style(google_style):
         style = '#' + style_map[m.group(2)]
     return icon, style
 
+
 def err(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
+
 
 def remove_google_styles(doc):
     for i in doc.xpath('x:Style | x:StyleMap', namespaces=ns):
         i.getparent().remove(i)
 
+
 def remove_lines(doc):
     for i in doc.xpath('x:Folder/x:Placemark[x:LineString]', namespaces=ns):
         i.getparent().remove(i)
+
 
 def remove_empty_folders(doc):
     for i in doc.xpath('x:Folder[not(x:Placemark)]', namespaces=ns):
         i.getparent().remove(i)
 
+
 def new_ordered_set(xs):
-    return C.OrderedDict((x, None) for x in xs)
+    return collections.OrderedDict((x, None) for x in xs)
+
 
 def add_maps_me_styles(doc):
     unique_styles = new_ordered_set(style_map.values())
@@ -136,6 +145,7 @@ def add_maps_me_styles(doc):
         ref = f'http://maps.me/placemarks/{name}.png'
         style = E.Style(E.IconStyle(E.Icon(E.href(ref))), id=name)
         doc.insert(i, style)
+
 
 def process(doc, verbose):
     remove_google_styles(doc)
@@ -147,11 +157,12 @@ def process(doc, verbose):
         icon, i.text = maps_me_icon_style(google_style)
         if icon is not None:
             if icon != 'None':
-                extended = T.SubElement(i.getparent(), 'ExtendedData', nsmap=mwmns)
-                icon_tag = T.SubElement(extended, f'{{{mwm}}}icon')
+                extended = tree.SubElement(i.getparent(), 'ExtendedData', nsmap=mwmns)
+                icon_tag = tree.SubElement(extended, f'{{{mwm}}}icon')
                 icon_tag.text = icon
         elif verbose:
             err(f'the icon from the following style is not found: {google_style}')
+
 
 def leave_unsupported(doc):
     for i in doc.xpath('x:Folder/x:Placemark/x:styleUrl', namespaces=ns):
@@ -159,9 +170,10 @@ def leave_unsupported(doc):
         if icon is not None:
             i.getparent().getparent().remove(i.getparent())
 
+
 def convert(filename, verbose, only_unsupported):
     with open(filename, 'r') as f:
-        root = T.parse(f)
+        root = tree.parse(f)
         doc = root.find('/x:Document', ns)
         if doc is None:
             raise Exception('Document tag not found')
@@ -172,23 +184,26 @@ def convert(filename, verbose, only_unsupported):
             leave_unsupported(doc)
 
         indent(root.getroot())
-        string = T.tostring(root,
-                            pretty_print=True,
-                            encoding='UTF-8',
-                            xml_declaration=True)
+        string = tree.tostring(root,
+                               pretty_print=True,
+                               encoding='UTF-8',
+                               xml_declaration=True)
         sys.stdout.buffer.write(string)
+
 
 def main():
     parser = argparse.ArgumentParser(description='Google My Maps to MAPS.ME KML converter')
-    parser.add_argument('file', metavar='GOOGLE_KML', help='Goolge My Maps KML')
+    parser.add_argument('file', metavar='GOOGLE_KML', help='Google My Maps KML')
     parser.add_argument('--verbose', action='store_true', help='verbose output')
-    parser.add_argument('--only-unsupported-styles', dest='only_unsupported', action='store_true', help='leave only placemarks with unsupported styles')
+    parser.add_argument('--only-unsupported-styles', dest='only_unsupported', action='store_true',
+                        help='leave only placemarks with unsupported styles')
     parser.add_argument('-v', '--version', action='version', version=f'%(prog)s {__version__}')
     args = parser.parse_args()
     try:
         convert(args.file, args.verbose, args.only_unsupported)
     except Exception as e:
         err(e)
+
 
 if __name__ == "__main__":
     main()
