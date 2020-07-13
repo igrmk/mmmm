@@ -7,7 +7,7 @@ import re
 import collections
 import argparse
 
-__version__ = '0.0.3'
+__version__ = '0.0.4'
 
 E = lxml.builder.ElementMaker()
 

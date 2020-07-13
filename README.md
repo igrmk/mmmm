@@ -19,4 +19,4 @@ Installation
 
 Thanks to
 ---------
-[![JetBrains](svg/jetbrains.svg)](https://www.jetbrains.com/?from=mmmm)
+[![JetBrains](https://raw.githubusercontent.com/igrmk/mmmm/master/svg/jetbrains.svg)](https://www.jetbrains.com/?from=mmmm)
