@@ -106,7 +106,7 @@ def indent(elem, level=0):
             elem.tail = i
 
 
-def maps_me_icon_style(google_style):
+def google_to_maps_me_icon_and_style(google_style):
     icon, style = None, google_style
     m = google_style_regex.match(google_style)
     if m and m.group(1) in icon_map:
@@ -120,7 +120,7 @@ def err(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
 
-def remove_google_styles(doc):
+def remove_old_styles(doc):
     for i in doc.xpath('x:Style | x:StyleMap', namespaces=ns):
         i.getparent().remove(i)
 
@@ -147,14 +147,10 @@ def add_maps_me_styles(doc):
         doc.insert(i, style)
 
 
-def process(doc, verbose):
-    remove_google_styles(doc)
-    remove_lines(doc)
-    remove_empty_folders(doc)
-    add_maps_me_styles(doc)
+def google_to_maps_me_icons(doc, verbose):
     for i in doc.xpath('x:Folder/x:Placemark/x:styleUrl', namespaces=ns):
         google_style = i.text
-        icon, i.text = maps_me_icon_style(google_style)
+        icon, i.text = google_to_maps_me_icon_and_style(google_style)
         if icon is not None:
             if icon != 'None':
                 extended = tree.SubElement(i.getparent(), 'ExtendedData', nsmap=mwmns)
@@ -164,9 +160,17 @@ def process(doc, verbose):
             err(f'the icon from the following style is not found: {google_style}')
 
 
+def process(doc, verbose):
+    remove_old_styles(doc)
+    remove_lines(doc)
+    remove_empty_folders(doc)
+    add_maps_me_styles(doc)
+    google_to_maps_me_icons(doc, verbose)
+
+
 def leave_unsupported(doc):
     for i in doc.xpath('x:Folder/x:Placemark/x:styleUrl', namespaces=ns):
-        icon, style = maps_me_icon_style(i.text)
+        icon, style = google_to_maps_me_icon_and_style(i.text)
         if icon is not None:
             i.getparent().getparent().remove(i.getparent())
 
