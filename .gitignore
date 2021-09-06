@@ -7,3 +7,4 @@ deploy
 deploy-test
 build-egg
 .idea
+.venv
