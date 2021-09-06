@@ -18,7 +18,18 @@ def get_version():
 
 def long_description():
     with open('README.md', 'r') as file_:
-        return file_.read()
+        lines = []
+        cut = False
+        for line in file_.readlines():
+            if '<!-- end -->' in line:
+                cut = False
+                continue
+            if '<!-- cut -->' in line:
+                cut = True
+                continue
+            if not cut:
+                lines.append(line)
+        return ''.join(lines)
 
 
 setuptools.setup(

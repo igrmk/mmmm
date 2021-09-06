@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 import lxml.etree as tree
 import sys
 import lxml.builder
@@ -7,7 +5,7 @@ import re
 import collections
 import argparse
 
-__version__ = '0.0.4'
+__version__ = '0.1.0'
 
 E = lxml.builder.ElementMaker()
 
@@ -207,7 +205,4 @@ def main():
         convert(args.file, args.verbose, args.only_unsupported)
     except Exception as e:
         err(e)
-
-
-if __name__ == "__main__":
-    main()
+        return 1

@@ -1,6 +1,9 @@
 Google My Maps to MAPS.ME KML converter
 =======================================
 
+<!-- cut -->
+[![Version](https://img.shields.io/pypi/v/mmmm.svg)](https://pypi.org/project/mmmm/)
+<!-- end -->
 MAPS.ME just ignores colors and icon images on importing Google My Maps KML.
 This simple tool tries to keep them.
 MAPS.ME has much less available colors and icons.
@@ -17,6 +20,8 @@ Installation
 
     pip3 install mmmm
 
+<!-- cut -->
 Thanks to
 ---------
 [![JetBrains](https://raw.githubusercontent.com/igrmk/mmmm/master/svg/jetbrains.svg)](https://www.jetbrains.com/?from=mmmm)
+<!-- end -->
