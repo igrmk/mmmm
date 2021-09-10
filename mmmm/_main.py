@@ -4,8 +4,7 @@ import lxml.builder
 import re
 import collections
 import argparse
-
-__version__ = '0.1.0'
+from .__version__ import __version__
 
 E = lxml.builder.ElementMaker()
 
@@ -193,8 +192,8 @@ def convert(filename, verbose, only_unsupported):
         sys.stdout.buffer.write(string)
 
 
-def main():
-    parser = argparse.ArgumentParser(description='Google My Maps to MAPS.ME KML converter')
+def _main():
+    parser = argparse.ArgumentParser(prog=__package__, description='Google My Maps to MAPS.ME KML converter')
     parser.add_argument('file', metavar='GOOGLE_KML', help='Google My Maps KML')
     parser.add_argument('--verbose', action='store_true', help='verbose output')
     parser.add_argument('--only-unsupported-styles', dest='only_unsupported', action='store_true',

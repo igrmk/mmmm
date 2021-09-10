@@ -1,2 +1,2 @@
-from .main import *
-from .main import __version__
+from ._main import __version__
+__all__ = ['__version__']
