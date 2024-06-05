@@ -1,0 +1,4 @@
+---
+dependencies:
+  - python=3.12.3
+  - lxml=5.2.2

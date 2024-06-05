@@ -175,7 +175,7 @@ def leave_unsupported(doc):
 def convert(filename, verbose, only_unsupported):
     with open(filename, 'r') as f:
         root = tree.parse(f)
-        doc = root.find('/x:Document', ns)
+        doc = root.find('.//x:Document', ns)
         if doc is None:
             raise Exception('Document tag not found')
 
