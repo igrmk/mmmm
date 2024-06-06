@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
 # constructs a version string from a Git repository according to the rules of Go modules
 # https://golang.org/ref/mod#versions
