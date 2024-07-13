@@ -6,6 +6,12 @@ import collections
 import argparse
 from .__version__ import __version__
 
+
+class ConversionError(Exception):
+    def __init__(self, message):
+        super().__init__(message)
+
+
 E = lxml.builder.ElementMaker()
 
 ns = {'x': 'http://www.opengis.net/kml/2.2'}
@@ -172,24 +178,24 @@ def leave_unsupported(doc):
             i.getparent().getparent().remove(i.getparent())
 
 
-def convert(filename, verbose, only_unsupported):
-    with open(filename, 'r') as f:
-        root = tree.parse(f)
-        doc = root.find('.//x:Document', ns)
-        if doc is None:
-            raise Exception('Document tag not found')
+def convert(input_file, output_file, verbose, only_unsupported):
+    try:
+        root = tree.parse(input_file)
+    except tree.XMLSyntaxError:
+        raise ConversionError('The document is either not in XML format or is poorly formatted')
 
-        if not only_unsupported:
-            process(doc, verbose)
-        else:
-            leave_unsupported(doc)
+    doc = root.find('.//x:Document', ns)
+    if doc is None:
+        raise ConversionError('The "Document" tag is missing')
 
-        indent(root.getroot())
-        string = tree.tostring(root,
-                               pretty_print=True,
-                               encoding='UTF-8',
-                               xml_declaration=True)
-        sys.stdout.buffer.write(string)
+    if not only_unsupported:
+        process(doc, verbose)
+    else:
+        leave_unsupported(doc)
+
+    indent(root.getroot())
+    string = tree.tostring(root, pretty_print=True, encoding='UTF-8', xml_declaration=True)
+    output_file.write(string)
 
 
 def _main():
@@ -201,7 +207,8 @@ def _main():
     parser.add_argument('-v', '--version', action='version', version=f'%(prog)s {__version__}')
     args = parser.parse_args()
     try:
-        convert(args.file, args.verbose, args.only_unsupported)
+        with open(args.file, 'r') as input_file:
+            convert(input_file, sys.stdout.buffer, args.verbose, args.only_unsupported)
     except Exception as e:
         err(e)
         return 1
