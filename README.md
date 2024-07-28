@@ -17,6 +17,8 @@ Usage
 
     mmmm google-maps.kml > maps-me.kml
 
+Or go to [Mmmm](https://mmm.city) and convert your KML online.
+
 Installation
 ------------
 
