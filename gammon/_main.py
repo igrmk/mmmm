@@ -55,6 +55,8 @@ style_map = {
 
 icon_map = {
     '1602': 'Hotel',
+    '1504': 'Airport',
+    '1532': 'Transport',
     '1507': 'Animals',
     '1743': 'Animals',
     '1667': 'Buddhism',
@@ -83,6 +85,7 @@ icon_map = {
     '1899': 'None',
     '1673': 'Islam',
     '1720': 'Park',
+    '1769': 'Park',
     '1644': 'Parking',
     '1684': 'Shop',
     '1685': 'Shop',
