@@ -12,7 +12,7 @@ Although Organic Maps supports fewer colors and icons,
 the tool does its best to match the original as closely as possible.
 Input on new icon mappings is appreciated.
 
-Formerly published as `mmmm`; now `gammon-im` on PyPI (the `gammon` command stays the same; online at
+Formerly published as `mmmm`; now installed as `gammon-im` and run as `gammon` (online at
 [gammon.im](https://gammon.im)).
 If you installed the old package, migrate with `pipx uninstall mmmm && pipx install gammon-im`.
 
