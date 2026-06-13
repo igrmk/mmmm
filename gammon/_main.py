@@ -156,8 +156,13 @@ def google_to_organic_maps_icons(doc, verbose):
         icon, i.text = google_to_organic_maps_icon_and_style(google_style)
         if icon is not None:
             if icon != 'None':
-                extended = tree.SubElement(i.getparent(), 'ExtendedData', nsmap=mwmns)
-                icon_tag = tree.SubElement(extended, f'{{{mwm}}}icon')
+                placemark = i.getparent()
+                extended = placemark.find('x:ExtendedData', ns)
+                if extended is None:
+                    extended = tree.SubElement(placemark, 'ExtendedData', nsmap=mwmns)
+                    icon_tag = tree.SubElement(extended, f'{{{mwm}}}icon')
+                else:
+                    icon_tag = tree.SubElement(extended, f'{{{mwm}}}icon', nsmap=mwmns)
                 icon_tag.text = icon
         elif verbose:
             err(f'the icon from the following style is not found: {google_style}')
