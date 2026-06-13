@@ -109,7 +109,7 @@ def indent(elem, level=0):
             elem.tail = i
 
 
-def google_to_maps_me_icon_and_style(google_style):
+def google_to_organic_maps_icon_and_style(google_style):
     icon, style = None, google_style
     m = google_style_regex.match(google_style)
     if m and m.group(1) in icon_map:
@@ -142,7 +142,7 @@ def new_ordered_set(xs):
     return collections.OrderedDict((x, None) for x in xs)
 
 
-def add_maps_me_styles(doc):
+def add_organic_maps_styles(doc):
     unique_styles = new_ordered_set(style_map.values())
     for i, name in enumerate(unique_styles):
         ref = f'http://maps.me/placemarks/{name}.png'
@@ -150,10 +150,10 @@ def add_maps_me_styles(doc):
         doc.insert(i, style)
 
 
-def google_to_maps_me_icons(doc, verbose):
+def google_to_organic_maps_icons(doc, verbose):
     for i in doc.xpath('x:Folder/x:Placemark/x:styleUrl', namespaces=ns):
         google_style = i.text
-        icon, i.text = google_to_maps_me_icon_and_style(google_style)
+        icon, i.text = google_to_organic_maps_icon_and_style(google_style)
         if icon is not None:
             if icon != 'None':
                 extended = tree.SubElement(i.getparent(), 'ExtendedData', nsmap=mwmns)
@@ -167,13 +167,13 @@ def process(doc, verbose):
     remove_old_styles(doc)
     remove_lines(doc)
     remove_empty_folders(doc)
-    add_maps_me_styles(doc)
-    google_to_maps_me_icons(doc, verbose)
+    add_organic_maps_styles(doc)
+    google_to_organic_maps_icons(doc, verbose)
 
 
 def leave_unsupported(doc):
     for i in doc.xpath('x:Folder/x:Placemark/x:styleUrl', namespaces=ns):
-        icon, style = google_to_maps_me_icon_and_style(i.text)
+        icon, style = google_to_organic_maps_icon_and_style(i.text)
         if icon is not None:
             i.getparent().getparent().remove(i.getparent())
 
@@ -199,7 +199,7 @@ def convert(input_file, output_file, verbose, only_unsupported):
 
 
 def _main():
-    parser = argparse.ArgumentParser(prog=__package__, description='Google My Maps to MAPS.ME KML converter')
+    parser = argparse.ArgumentParser(prog=__package__, description='Google My Maps to Organic Maps KML converter')
     parser.add_argument('file', metavar='GOOGLE_KML', help='Google My Maps KML')
     parser.add_argument('--verbose', action='store_true', help='verbose output')
     parser.add_argument('--only-unsupported-styles', dest='only_unsupported', action='store_true',

@@ -1,8 +1,8 @@
-Google My Maps to MAPS.ME KML converter
-=======================================
+Gammon — Google My Maps to Organic Maps KML converter
+=====================================================
 
 <!-- cut -->
-[![Version](https://img.shields.io/pypi/v/mmmm.svg)](https://pypi.org/project/mmmm/)
+[![Version](https://img.shields.io/pypi/v/gammon.svg)](https://pypi.org/project/gammon/)
 <!-- end -->
 
 This tool adapts KML files from Google My Maps
@@ -12,17 +12,20 @@ Although Organic Maps supports fewer colors and icons,
 the tool does its best to match the original as closely as possible.
 Input on new icon mappings is appreciated.
 
+Formerly published as `mmmm`; now renamed to `gammon` (online at [gammon.im](https://gammon.im)).
+If you installed the old package, migrate with `pipx uninstall mmmm && pipx install gammon`.
+
 Usage
 -----
 
-    mmmm google-maps.kml > maps-me.kml
+    gammon google-maps.kml > organic-maps.kml
 
-Or go to [Mmmm](https://mmm.city) and convert your KML online.
+Or go to [Gammon](https://gammon.im) and convert your KML online.
 
 Installation
 ------------
 
-    pipx install mmmm
+    pipx install gammon
 
 Development
 -----------
@@ -34,10 +37,10 @@ You can create a virtual environment for testing by executing the commands below
 
 Then, from the project root directory, you can run the converter with the following command:
 
-    python -m mmmm google-maps.kml
+    python -m gammon google-maps.kml
 
 <!-- cut -->
 Thanks to
 ---------
-[![JetBrains](https://raw.githubusercontent.com/igrmk/mmmm/master/svg/jetbrains.svg)](https://www.jetbrains.com/?from=mmmm)
+[![JetBrains](https://raw.githubusercontent.com/igrmk/gammon/master/svg/jetbrains.svg)](https://www.jetbrains.com/?from=gammon)
 <!-- end -->

@@ -1,6 +1,6 @@
 *.kml
 __pycache__
-mmmm.egg-info
+gammon.egg-info
 dist
 build
 deploy
