@@ -3,7 +3,7 @@ requires = ["hatchling", "hatch-vcs", "hatch-fancy-pypi-readme"]
 build-backend = "hatchling.build"
 
 [project]
-name = "gammon"
+name = "gammon-im"
 dynamic = ["version", "readme"]
 description = "Google My Maps to Organic Maps KML converter"
 requires-python = ">=3.9"

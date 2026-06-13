@@ -2,7 +2,7 @@ Gammon — Google My Maps to Organic Maps KML converter
 =====================================================
 
 <!-- cut -->
-[![Version](https://img.shields.io/pypi/v/gammon.svg)](https://pypi.org/project/gammon/)
+[![Version](https://img.shields.io/pypi/v/gammon-im.svg)](https://pypi.org/project/gammon-im/)
 <!-- end -->
 
 This tool adapts KML files from Google My Maps
@@ -12,8 +12,9 @@ Although Organic Maps supports fewer colors and icons,
 the tool does its best to match the original as closely as possible.
 Input on new icon mappings is appreciated.
 
-Formerly published as `mmmm`; now renamed to `gammon` (online at [gammon.im](https://gammon.im)).
-If you installed the old package, migrate with `pipx uninstall mmmm && pipx install gammon`.
+Formerly published as `mmmm`; now `gammon-im` on PyPI (the `gammon` command stays the same; online at
+[gammon.im](https://gammon.im)).
+If you installed the old package, migrate with `pipx uninstall mmmm && pipx install gammon-im`.
 
 Usage
 -----
@@ -25,7 +26,7 @@ Or go to [Gammon](https://gammon.im) and convert your KML online.
 Installation
 ------------
 
-    pipx install gammon
+    pipx install gammon-im
 
 Development
 -----------
