@@ -179,7 +179,7 @@ def process(doc, verbose):
 def leave_unsupported(doc):
     for i in doc.xpath('x:Folder/x:Placemark/x:styleUrl', namespaces=ns):
         icon, style = google_to_organic_maps_icon_and_style(i.text)
-        if icon is not None:
+        if icon is not None and style != i.text:
             i.getparent().getparent().remove(i.getparent())
 
 
