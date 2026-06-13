@@ -1,0 +1,50 @@
+[build-system]
+requires = ["hatchling", "hatch-vcs", "hatch-fancy-pypi-readme"]
+build-backend = "hatchling.build"
+
+[project]
+name = "gammon"
+dynamic = ["version", "readme"]
+description = "Google My Maps to Organic Maps KML converter"
+requires-python = ">=3.9"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "igrmk", email = "igrmkx@gmail.com" }]
+dependencies = ["lxml"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+
+[project.scripts]
+gammon = "gammon._main:_main"
+
+[project.urls]
+Homepage = "https://github.com/igrmk/gammon"
+Website = "https://gammon.im"
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.build.targets.wheel]
+packages = ["gammon"]
+
+[tool.hatch.metadata.hooks.fancy-pypi-readme]
+content-type = "text/markdown"
+
+[[tool.hatch.metadata.hooks.fancy-pypi-readme.fragments]]
+path = "README.md"
+
+[[tool.hatch.metadata.hooks.fancy-pypi-readme.substitutions]]
+pattern = '(?s)<!-- cut -->.*?<!-- end -->\n*'
+replacement = ''
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+preview = true
+select = ["E", "W", "F"]
+
+[dependency-groups]
+dev = ["ruff"]

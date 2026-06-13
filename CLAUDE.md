@@ -5,8 +5,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Conventions
 
 Keep every line in this repository — code, Markdown (including this file), and config — to a maximum of 120
-characters. The Python lint config (`setup.cfg`) already enforces 120; apply the same limit everywhere by
-hard-wrapping prose.
+characters. Ruff (configured in `pyproject.toml`) already enforces 120 for Python; apply the same limit
+everywhere by hard-wrapping prose.
 
 Write each commit message as a single Conventional Commits line — `type(scope): summary`, with no body —
 where type is one of `feat`, `fix`, `docs`, `refactor`, `perf`, `test`, `build`, `ci`, or `chore` (scope
@@ -21,24 +21,22 @@ runs the backend of https://gammon.im.
 
 ## Commands
 
-Set up the dev environment (micromamba/conda):
+Set up the dev environment (installs deps and the package in editable mode into `.venv`):
 
-    micromamba env create --prefix ./.venv --file environment.yml
-    micromamba activate ./.venv
+    uv sync
 
 Run the converter against a KML file (writes result to stdout):
 
-    python -m gammon google-maps.kml > organic-maps.kml
+    uv run gammon google-maps.kml > organic-maps.kml
 
 Useful flags:
 - `--verbose` — log Google styles whose icon has no mapping (drives new `icon_map` entries).
 - `--only-unsupported-styles` — inverse mode: keep *only* placemarks whose style is recognized-but-unmapped,
   to surface gaps in the mapping tables.
 
-Lint (config in `setup.cfg`, max line length 120):
+Lint (Ruff config in `pyproject.toml`, max line length 120):
 
-    flake8 gammon
-    pycodestyle gammon
+    uv run ruff check
 
 There is **no test suite** in this repo; verify changes by running the converter on a sample KML.
 
@@ -76,7 +74,7 @@ always means adding entries to these two dicts — use `--verbose` to find unmap
 
 ## Versioning & release
 
-`describe-version` is a bash script that derives a version string from git tags following the Go modules
-pseudo-version rules (tag `vX.Y.Z` on HEAD → `X.Y.Z`; otherwise a dev pseudo-version). `setup.py` shells out
-to it at build time, so the package version is never hardcoded. Pushing a `v*` tag triggers
-`.github/workflows/publish.yml`, which builds the sdist/wheel and publishes to PyPI.
+The version is derived from git tags by `hatch-vcs` at build time: a `vX.Y.Z` tag on HEAD → `X.Y.Z`; otherwise
+the next patch as a dev pre-release (e.g. after `v1.0.2` → `1.0.3.devN+g<hash>`, where N is commits since the
+tag). It is never hardcoded. Pushing a `v*` tag triggers `.github/workflows/publish.yml`, which runs `uv build`
+and publishes to PyPI via OIDC trusted publishing.

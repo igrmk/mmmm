@@ -30,14 +30,11 @@ Installation
 Development
 -----------
 
-You can create a virtual environment for testing by executing the commands below:
+Install [uv](https://docs.astral.sh/uv/), then sync the environment and run the converter or the linter:
 
-    micromamba env create --prefix ./.venv --file environment.yml
-    micromamba activate ./.venv
-
-Then, from the project root directory, you can run the converter with the following command:
-
-    python -m gammon google-maps.kml
+    uv sync
+    uv run gammon google-maps.kml > organic-maps.kml
+    uv run ruff check
 
 <!-- cut -->
 Thanks to
