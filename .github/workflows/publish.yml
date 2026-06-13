@@ -8,11 +8,13 @@ jobs:
   publish:
     name: Publish
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-        with: {python-version: 3.9}
-      - run: pip install wheel
-      - run: python setup.py sdist bdist_wheel
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: pip install build
+      - run: python -m build --sdist --wheel
       - uses: pypa/gh-action-pypi-publish@release/v1
-        with: {password: "${{ secrets.PYPI_PASSWORD }}"}
