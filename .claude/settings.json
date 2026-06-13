@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "effortLevel": "xhigh",
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
+  "permissions": {
+    "deny": [
+      "Read(//**/*.ignore)",
+      "Read(//**/*.ignore.*)",
+      "Read(//**/.idea/**)"
+    ],
+    "allow": [
+      "Edit",
+      "Write",
+      "WebSearch",
+      "WebFetch",
+      "Read(/tmp/**)",
+      "Write(/tmp/**)",
+      "Bash(git add *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git show *)",
+      "Bash(git status *)",
+      "Bash(git ls-tree *)",
+      "Bash(git mv *)",
+      "Bash(ls *)",
+      "Bash(cat *)",
+      "Bash(sed *)",
+      "Bash(awk *)",
+      "Bash(grep *)",
+      "Bash(find *)",
+      "Bash(head *)",
+      "Bash(printf *)",
+      "Bash(xxd *)",
+      "Bash(curl *)",
+      "Bash(prettier *)",
+      "Bash(psql *)",
+      "Bash(rm *)",
+      "Bash(echo *)"
+    ]
+  }
+}
