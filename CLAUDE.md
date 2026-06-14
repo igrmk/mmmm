@@ -15,7 +15,7 @@ optional). This is a solo project: commit directly to `master`; do not create fe
 ## What this is
 
 `gammon` — short for "Google My Maps to OrgaNIc Maps", as in the domain `gammon.im` — is a single-purpose CLI
-that converts Google My Maps KML exports into KML that Organic Maps / MAPS.ME can import, preserving placemark
+that converts Google My Maps KML/KMZ exports into KML that Organic Maps / MAPS.ME can import, preserving placemark
 colors and icons as closely as the smaller Organic Maps style set allows. Published to PyPI as `gammon-im`; also
 runs the backend of https://gammon.im.
 
@@ -47,8 +47,9 @@ Effectively all logic lives in `gammon/_main.py`. The rest of the package is thi
 resolves the installed distribution version.
 
 `convert(input_file, output_file, verbose, only_unsupported)` is the entry point used by both the CLI and the
-web backend. It parses the KML with `lxml`, finds the `<Document>` element, runs the transform pipeline, then
-re-indents and serializes. All KML lookups use the OpenGIS namespace via the `ns` / `x:` prefix; MAPS.ME's
+web backend. It unwraps a KMZ archive if the input is one, then parses the KML with `lxml`, finds the
+`<Document>` element, runs the transform pipeline, then re-indents and serializes. All KML lookups use the
+OpenGIS namespace via the `ns` / `x:` prefix; MAPS.ME's
 custom `<mwm:icon>` extension uses the `mwm` namespace (`https://maps.me`). Organic Maps reads this same
 MAPS.ME-format KML, so the `maps.me` namespace and `placemark-*` style names in the code are deliberate
 format references, not project branding — do not rename them.

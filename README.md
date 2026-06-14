@@ -5,7 +5,7 @@ Gammon — Google My Maps to Organic Maps KML converter
 [![Version](https://img.shields.io/pypi/v/gammon-im.svg)](https://pypi.org/project/gammon-im/)
 <!-- end -->
 
-This tool adapts KML files from Google My Maps
+This tool adapts KML and KMZ files from Google My Maps
 for use with [Organic Maps](https://organicmaps.app/) (and MAPS.ME),
 striving to maintain color and icon accuracy.
 Although Organic Maps supports fewer colors and icons,

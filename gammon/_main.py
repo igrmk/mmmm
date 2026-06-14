@@ -4,6 +4,8 @@ import lxml.builder
 import re
 import collections
 import argparse
+import io
+import zipfile
 from .__version__ import __version__
 
 
@@ -186,9 +188,32 @@ def leave_unsupported(doc):
             i.getparent().getparent().remove(i.getparent())
 
 
+def kml_bytes(input_file):
+    data = input_file.read()
+    if isinstance(data, str):
+        data = data.encode('utf-8')
+    if data[:4] == b'PK\x03\x04':
+        try:
+            with zipfile.ZipFile(io.BytesIO(data)) as kmz:
+                kmls = [n for n in kmz.namelist() if n.lower().endswith('.kml')]
+                if not kmls:
+                    raise ConversionError('The KMZ archive does not contain a KML file')
+                if 'doc.kml' in kmls:
+                    name = 'doc.kml'
+                elif len(kmls) == 1:
+                    name = kmls[0]
+                else:
+                    raise ConversionError('The KMZ archive contains multiple KML files')
+                return kmz.read(name)
+        except zipfile.BadZipFile:
+            raise ConversionError('The document is either not in XML format or is poorly formatted')
+    return data
+
+
 def convert(input_file, output_file, verbose, only_unsupported):
+    data = kml_bytes(input_file)
     try:
-        root = tree.parse(input_file)
+        root = tree.parse(io.BytesIO(data))
     except tree.XMLSyntaxError:
         raise ConversionError('The document is either not in XML format or is poorly formatted')
 
@@ -208,14 +233,14 @@ def convert(input_file, output_file, verbose, only_unsupported):
 
 def _main():
     parser = argparse.ArgumentParser(prog=__package__, description='Google My Maps to Organic Maps KML converter')
-    parser.add_argument('file', metavar='GOOGLE_KML', help='Google My Maps KML')
+    parser.add_argument('file', metavar='GOOGLE_KML', help='Google My Maps KML or KMZ')
     parser.add_argument('--verbose', action='store_true', help='verbose output')
     parser.add_argument('--only-unsupported-styles', dest='only_unsupported', action='store_true',
                         help='leave only placemarks with unsupported styles')
     parser.add_argument('-v', '--version', action='version', version=f'%(prog)s {__version__}')
     args = parser.parse_args()
     try:
-        with open(args.file, 'r') as input_file:
+        with open(args.file, 'rb') as input_file:
             convert(input_file, sys.stdout.buffer, args.verbose, args.only_unsupported)
     except Exception as e:
         err(e)
